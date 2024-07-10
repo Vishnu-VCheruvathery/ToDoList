@@ -1,9 +1,11 @@
+const SERVER_URL = import.meta.env.VITE_APP_SERVER_BASE_URL
+
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axios from 'axios'
 
 export const showTask = createAsyncThunk('showTask', async(args, {rejectWithValue}) => {
     try {
-        const response = await axios.get("http://localhost:3000/tasks")
+        const response = await axios.get(`${SERVER_URL}/tasks`)
         const result = await response.data
         return result
     } catch (error) {
@@ -15,7 +17,7 @@ export const showTask = createAsyncThunk('showTask', async(args, {rejectWithValu
 export const addTask = createAsyncThunk('addTask', async(args, {rejectWithValue}) => {
     try {
          const {name, task} = args
-        const response = await axios.post("http://localhost:3000/tasks/add", {name: name, task: task })
+        const response = await axios.post("${SERVER_URL}/tasks/add", {name: name, task: task })
         const result = await response.data
         return result
     } catch (error) {
@@ -26,7 +28,7 @@ export const addTask = createAsyncThunk('addTask', async(args, {rejectWithValue}
 export const deleteTask = createAsyncThunk('deleteTask', async(id, {rejectWithValue}) => {
      console.log(id)
      try {
-        const response = await axios.delete(`http://localhost:3000/tasks/delete/${id}`)
+        const response = await axios.delete(`${SERVER_URL}/tasks/delete/${id}`)
         const result = await response.data
         return result
      } catch (error) {
@@ -37,7 +39,7 @@ export const deleteTask = createAsyncThunk('deleteTask', async(id, {rejectWithVa
 export const updateTask = createAsyncThunk('updateTask', async(args, {rejectWithValue}) => {
     const {taskId, name, task} = args
     try {
-        const response = await axios.put(`http://localhost:3000/tasks/edit/${taskId}`, {name, task})
+        const response = await axios.put(`${SERVER_URL}/tasks/edit/${taskId}`, {name, task})
         const result = await response.data
         return result;
     } catch (error) {
@@ -49,7 +51,7 @@ export const completeTask = createAsyncThunk('completeTask', async(args, {reject
     const {id, complete} = args
 
     try {
-        const response = await axios.post(`http://localhost:3000/tasks/completed/${id}`, {complete})
+        const response = await axios.post(`${SERVER_URL}/tasks/completed/${id}`, {complete})
         const result = await response.data
         return result
     } catch (error) {
