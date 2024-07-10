@@ -1,17 +1,30 @@
-FROM node:alpine3.19 as build
+FROM node:18-alpine as build
 
-# Build App
+# Set the working directory
 WORKDIR /app
-COPY package.json .
-RUN npm install
-COPY . .
-RUN vite build
 
-# Serve with Nginx
-FROM nginx:1.23-alpine
-WORKDIR /usr/share/nginx/html
-RUN rm -rf *
-COPY --from=build /app/build .
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# Use a minimal image for the final stage
+FROM nginx:alpine
+
+# Copy the built files from the previous stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Expose the port the app runs on
 EXPOSE 80
-ENTRYPOINT [ "nginx", "-g", "daemon off;" ]
+
+# Start Nginx server
+CMD ["nginx", "-g", "daemon off;"]
+
 
